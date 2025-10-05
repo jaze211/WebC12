@@ -3,7 +3,7 @@ FROM openjdk:8-jdk AS build
 
 WORKDIR /app
 
-# Install Ant and wget (for downloading dependencies)
+# Install Ant and wget
 RUN apt-get update && apt-get install -y ant wget && rm -rf /var/lib/apt/lists/*
 
 # Download javax.servlet-api for compilation
@@ -16,16 +16,26 @@ COPY libs /app/libs
 
 # Build ch12_ex1_sqlGateway using Ant
 WORKDIR /app/ch12_ex1_sqlGateway
-RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar
+RUN ant clean dist \
+    -Dlibs.dir=/app/libs \
+    -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
+    -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
+    -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
+    -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
 
 # Build ch12_ex2_userAdmin using Ant
 WORKDIR /app/ch12_ex2_userAdmin
-RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar
+RUN ant clean dist \
+    -Dlibs.dir=/app/libs \
+    -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
+    -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
+    -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
+    -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
 
 # ---- Stage 2: Run ----
 FROM tomcat:9-jdk11-openjdk
 
-# Configure Tomcat to use Render's $PORT (fallback to 8080)
+# Configure Tomcat to use Render's $PORT
 RUN sed -i 's/port="8080"/port="${connector.port}"/' /usr/local/tomcat/conf/server.xml
 RUN echo '#!/bin/sh' > /usr/local/tomcat/bin/setenv.sh && \
     echo 'if [ -z "$PORT" ]; then' >> /usr/local/tomcat/bin/setenv.sh && \

@@ -1,4 +1,126 @@
-
+Perspective
+The goal of this chapter has been to show you how to use JDBC and
+connection pooling within the context of a web application. Although there’s a
+lot more to database programming than that, this should get you off to a good
+start. In fact, the skills in this chapter are adequate for most small- to medium￾sized websites.
+For large websites, though, the skills presented in this chapter may not be
+adequate. In that case, you may want to use other third-party tools to design
+and create a database, to map objects to a database, and to manage a connection
+pool. For example, you may want to use JPA (Java Persistence API) to map
+your objects to a relational database as described in the next chapter. Or, you
+may need to use EJBs (Enterprise JavaBeans). To learn more about EJBs, you
+can start by reading more about them on the Internet.
+Summary
+To write Java code that works with a database, you use Java Database
+Connectivity { JDBC). To do that, you use the classes in the JDBC API.
+Before you can access a database, you must install a database driver on the
+database server. Then, before you can work with the database, you must load
+the driver and create a Connection object that connects to the database.
+With JDBC 4.0, the database driver is loaded automatically. This new feature
+is known as automatic driver loading.
+You use the createStatement method of the Connection object to create
+a Statement object that contains the SQL statement that you want to run.
+Then, you use the executeQuery or executeUpdate method to run the SQL
+statement.
+When you run a SELECT statement, it returns a result set to your program.
+Then, you can use the methods of the ResultSet object to move the cursor
+through the rows of the result set and to get the data from the rows.
+An SQL injection attack allows a hacker to execute SQL statements against
+your database that read sensitive data, modify data, or delete data.
+Prepared statements can improve the performance of database operations
+and prevent most types of SQL injection attacks. To use them, you can
+use a PreparedStatement object instead of a Statement object to run SQL
+statements.
+A ResultSetMetaData object contains information about a result set like the
+number of columns in the table and the names of the columns.
+Database connection pooling ( DBCP) can improve the performance of a
+web application by sharing the connections to a database between all of the
+users of the application.
+419 Chapter 12 How to use JDBC to work with a database
+Before you do the exercises for this chapter
+The exercises for this chapter assume that you’ve already installed Tomcat and
+MySQL as described in appendix A (PC) or B (Mac). As a result, the JAR files
+lor the JDBC driver lor MySQL and the connection pool should be available to
+this project through the Tomcat libraries. If they aren’t, you can add these JAR
+files to your project as described in this chapter.
+If you’re using NetBeans, you may need to register the connection to the murach
+database when you open the projects for these exercises. To do that, you can use
+the procedure in figure 3-15.
+Exercise 12-1 Implement connection pooling
+In this exercise, you’ll enhance the SQL Gateway application shown in this
+chapter so that it uses connection pooling.
+Open the chl2_exl_sqlGateway project in the ex_starts directory.
+Run the application and execute the default SELECT statement to see how this
+application works. If you get an error message that says,
+“No suitable driver
+found,
+” you may need to make the JAR file for the MySQL driver available to
+your project.
+Add the library for the connection pool to the project. To do that, right-click
+on the Libraries folder, select the Add JAR/Folder command, and use the
+resulting dialog box to select the tomcat-dbcp.jar file.
+Open the context.xml file in the META-INF folder. Then, modify it so
+it includes a Resource element that configures a connection pool. The
+easiest way to do this is to copy the Resource element from the chl 2email
+application’s context.xml file.
+Create a ConnectionPool class in a package named data that you can use to get
+or free a connection. The easiest way to do this is to copy the ConnectionPool
+class from the chl2email application.
+Open the SQLGatewayServlet.java file that’s stored in the murach.sql
+package. Then, modify this servlet so it uses the ConnectionPool class to get a
+connection. Make sure to free this connection after you’re done using it. To do
+that, you can add a finally clause to the try/catch statement.
+Run the application and make sure it works as before.
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+Exercise 12-2 Create a User Admin application
+In this exercise, you’ll create an application that allows you to view all users,
+update existing users, and delete users in the User table of the murach database.
+Review the code
+1. Open the project named chl2_ex2_userAdmin in the ex_starts directory.
+420 Section 3 Essential database skills
+2. Review the Java code for this application. Note that the UsersServlet and
+UserDB classes aren’t finished.
+3. Review the configuration files for this application. Note that the context.xml
+file configures connection pooling and that the web.xml file maps the servlet
+to a URL.
+Add code to display the users
+4. Open the UserDB class that’s located in the murach.data package. Then, add
+code to the selectUsers method to return an ArrayList of User objects that
+corresponds with the rows in the User table.
+5. Open the UsersServlet class and add code to the display_users action that gets
+an ArrayList of User objects from the User table, sets that list as a request
+attribute, and forwards the request to the index.jsp file.
+6. Run the application to make sure it works correctly for the display_users
+action.
+Add code to update a user
+7. Open the index.jsp file. Note that the Update and Delete links request the
+UsersServlet and pass an action parameter to it to specify the action and an
+email address to specify the user.
+8. Open the UsersServlet class and add code for the display_user action that gets
+the User object for the specified email, stores this object in the request, and
+forwards the request to the user.jsp file. This should display the user.
+9. Open the user.jsp file. Note that it displays user data and submits it to the
+UsersServlet class with an action that specifies that the user should be
+updated.
+10. Open the UsersServlet class and add code to the update_user action that
+updates the first and last name of the user in the User table. This servlet
+should forward the request to the UsersServlet so it displays the current users.
+11. Run the application to make sure it works correctly for the update_user action.
+Add code that deletes a user
+12. Open the UsersServlet class and add code to the delete_user action that deletes
+the specified user. This servlet should forward the request to the UsersServlet
+so it displays the current users,
+13. Run the application to make sure it works correctly. You shouldn’t be able to
+delete any users that have related rows in the Download table. This includes
+the three users added as part of the database creation script. However, you
+should be able to delete any users that you add with the chl 2email application
+in the book_apps directory.
 
 |-- ch12email
 |   |-- nbproject
