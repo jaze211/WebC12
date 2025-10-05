@@ -16,11 +16,11 @@ COPY libs /app/libs
 
 # Build ch12_ex1_sqlGateway using Ant
 WORKDIR /app/ch12_ex1_sqlGateway
-RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar
+RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar
 
 # Build ch12_ex2_userAdmin using Ant
 WORKDIR /app/ch12_ex2_userAdmin
-RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar
+RUN ant clean dist -Dlibs.dir=/app/libs -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar
 
 # ---- Stage 2: Run ----
 FROM tomcat:9-jdk11-openjdk
