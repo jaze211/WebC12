@@ -1,4 +1,3 @@
-# ---- Stage 1: Build ----
 FROM openjdk:8-jdk AS build
 
 WORKDIR /app
@@ -22,6 +21,9 @@ WORKDIR /app/ch12_ex1_sqlGateway
 # Patch MySQLDriver path in project.properties
 RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
 
+# Patch tomcat-dbcp.jar reference if it's added as a JAR file
+RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
+
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
     -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
@@ -36,6 +38,9 @@ WORKDIR /app/ch12_ex2_userAdmin
 
 # Patch MySQLDriver path in project.properties
 RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
+
+# Patch tomcat-dbcp.jar reference if it's added as a JAR file
+RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
 
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
