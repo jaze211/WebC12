@@ -1,9 +1,10 @@
+# ---- Stage 1: Build ----
 FROM openjdk:8-jdk AS build
 
 WORKDIR /app
 
-# Install Ant and wget (for downloading dependencies)
-RUN apt-get update && apt-get install -y ant wget && rm -rf /var/lib/apt/lists/*
+# Install Ant and other dependencies
+RUN apt-get update && apt-get install -y ant wget unzip && rm -rf /var/lib/apt/lists/*
 
 # Download javax.servlet-api for compilation
 RUN wget https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar -O /app/javax.servlet-api-4.0.1.jar
@@ -18,70 +19,73 @@ COPY libs /app/libs
 # ========================
 WORKDIR /app/ch12_ex1_sqlGateway
 
-# Patch MySQLDriver path in project.properties
-RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
+# Fix project properties and build files
+RUN cp -r /app/libs/* web/WEB-INF/lib/ 2>/dev/null || true
 
-# Patch tomcat-dbcp.jar reference if it's added as a JAR file
-RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
+# Create build directory structure manually to avoid Ant issues
+RUN mkdir -p build/web/WEB-INF/classes && \
+    mkdir -p build/web/META-INF
 
-# Add servlet API to project.properties
-RUN echo "file.reference.javax-servlet-api-4.0.1.jar=/app/javax.servlet-api-4.0.1.jar" >> nbproject/project.properties
+# Copy web files manually
+RUN cp -r web/* build/web/ 2>/dev/null || true
 
-# Append servlet API to javac.classpath (assuming multi-line format, insert new line)
-RUN sed -i '/^javac\.classpath=\\s*$/a \    \${file.reference.javax-servlet-api-4.0.1.jar}:' nbproject/project.properties
+# Try alternative build approach - compile directly
+RUN find src -name "*.java" > sources.txt && \
+    mkdir -p build/classes && \
+    javac -cp "/app/javax.servlet-api-4.0.1.jar:/app/libs/*:web/WEB-INF/lib/*" \
+          -d build/classes \
+          @sources.txt
 
-# Update source and target to 1.8 to avoid bootstrap warning
-RUN sed -i 's/^javac.source=.*/javac.source=1.8/' nbproject/project.properties
-RUN sed -i 's/^javac.target=.*/javac.target=1.8/' nbproject/project.properties
-
-RUN ant clean dist \
-    -Dlibs.dir=/app/libs \
-    -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
-    -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
-    -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
+# Create WAR manually
+WORKDIR /app/ch12_ex1_sqlGateway/build
+RUN jar cf ../dist/ch12_ex1_sqlGateway.war -C web . && \
+    jar uf ../dist/ch12_ex1_sqlGateway.war -C classes .
 
 # ========================
-# Build ch12_ex2_userAdmin
+# Build ch12_ex2_userAdmin  
 # ========================
 WORKDIR /app/ch12_ex2_userAdmin
 
-# Patch MySQLDriver path in project.properties
-RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
+# Copy libraries to WEB-INF/lib
+RUN cp -r /app/libs/* web/WEB-INF/lib/ 2>/dev/null || true
 
-# Patch tomcat-dbcp.jar reference if it's added as a JAR file
-RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
+# Create build directory structure
+RUN mkdir -p build/web/WEB-INF/classes && \
+    mkdir -p build/web/META-INF
 
-# Add servlet API to project.properties
-RUN echo "file.reference.javax-servlet-api-4.0.1.jar=/app/javax.servlet-api-4.0.1.jar" >> nbproject/project.properties
+# Copy web files
+RUN cp -r web/* build/web/ 2>/dev/null || true
 
-# Append servlet API to javac.classpath (assuming multi-line format, insert new line)
-RUN sed -i '/^javac\.classpath=\\s*$/a \    \${file.reference.javax-servlet-api-4.0.1.jar}:' nbproject/project.properties
+# Compile Java files
+RUN find src -name "*.java" > sources.txt && \
+    mkdir -p build/classes && \
+    javac -cp "/app/javax.servlet-api-4.0.1.jar:/app/libs/*:web/WEB-INF/lib/*" \
+          -d build/classes \
+          @sources.txt
 
-# Update source and target to 1.8 to avoid bootstrap warning
-RUN sed -i 's/^javac.source=.*/javac.source=1.8/' nbproject/project.properties
-RUN sed -i 's/^javac.target=.*/javac.target=1.8/' nbproject/project.properties
-
-RUN ant clean dist \
-    -Dlibs.dir=/app/libs \
-    -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
-    -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
-    -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
+# Create WAR manually
+WORKDIR /app/ch12_ex2_userAdmin/build
+RUN jar cf ../dist/ch12_ex2_userAdmin.war -C web . && \
+    jar uf ../dist/ch12_ex2_userAdmin.war -C classes .
 
 # ---- Stage 2: Run ----
 FROM tomcat:9-jdk11-openjdk
 
-# Configure Tomcat to use Render's $PORT (fallback to 8080)
-RUN sed -i 's/port="8080"/port="${connector.port}"/' /usr/local/tomcat/conf/server.xml
-RUN echo '#!/bin/sh' > /usr/local/tomcat/bin/setenv.sh && \
-    echo 'if [ -z "$PORT" ]; then' >> /usr/local/tomcat/bin/setenv.sh && \
-    echo '  PORT=8080' >> /usr/local/tomcat/bin/setenv.sh && \
-    echo 'fi' >> /usr/local/tomcat/bin/setenv.sh && \
-    echo 'CATALINA_OPTS="$CATALINA_OPTS -Dconnector.port=$PORT"' >> /usr/local/tomcat/bin/setenv.sh && \
-    chmod +x /usr/local/tomcat/bin/setenv.sh
+# Create necessary directories
+RUN mkdir -p /usr/local/tomcat/webapps
 
-# Copy WAR files to Tomcat webapps
-COPY --from=build /app/ch12_ex1_sqlGateway/dist/ch12_ex1_sqlGateway.war /usr/local/tomcat/webapps/ch12_ex1_sqlGateway.war
-COPY --from=build /app/ch12_ex2_userAdmin/dist/ch12_ex2_userAdmin.war /usr/local/tomcat/webapps/ch12_ex2_userAdmin.war
+# Configure Tomcat for Render
+RUN sed -i 's/port="8080"/port="${PORT:-8080}"/' /usr/local/tomcat/conf/server.xml
+
+# Copy WAR files to Tomcat
+COPY --from=build /app/ch12_ex1_sqlGateway/dist/ch12_ex1_sqlGateway.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=build /app/ch12_ex2_userAdmin/dist/ch12_ex2_userAdmin.war /usr/local/tomcat/webapps/admin.war
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/ || exit 1
 
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+
+# Use the PORT environment variable provided by Render
+CMD ["sh", "-c", "catalina.sh run"]
