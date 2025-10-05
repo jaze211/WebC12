@@ -1,0 +1,212 @@
+
+
+|-- ch12email
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- profiler
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           |-- business
+|   |           |   +-- User.java
+|   |           |-- data
+|   |           |   |-- ConnectionPool.java
+|   |           |   |-- DBUtil.java
+|   |           |   +-- UserDB.java
+|   |           +-- email
+|   |               +-- EmailListServlet.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   +-- web.xml
+|   |   |-- .LCKjoin_email_list.html~
+|   |   |-- index.jsp
+|   |   +-- thanks.jsp
+|   +-- build.xml
+|-- ch12sqlGateway
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           +-- sql
+|   |               |-- SqlGatewayServlet.java
+|   |               +-- SQLUtil.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- sql_scripts
+|   |   |   |-- UsersDelete.sql
+|   |   |   |-- UsersInsert.sql
+|   |   |   |-- UsersSelect.sql
+|   |   |   |-- UserTestCreate.sql
+|   |   |   +-- UserTestDrop.sql
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   +-- web.xml
+|   |   +-- index.jsp
+|   +-- build.xml
+|-- ch12_ex1_sqlGateway
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           +-- sql
+|   |               |-- SqlGatewayServlet.java
+|   |               +-- SQLUtil.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- sql_scripts
+|   |   |   |-- UsersDelete.sql
+|   |   |   |-- UsersInsert.sql
+|   |   |   |-- UsersSelect.sql
+|   |   |   |-- UserTestCreate.sql
+|   |   |   +-- UserTestDrop.sql
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   +-- web.xml
+|   |   +-- index.jsp
+|   +-- build.xml
+|-- ch12_ex1_sqlGateway_sol
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           +-- sql
+|   |               |-- ConnectionPool.java
+|   |               |-- SqlGatewayServlet.java
+|   |               +-- SQLUtil.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- sql_scripts
+|   |   |   |-- UsersDelete.sql
+|   |   |   |-- UsersInsert.sql
+|   |   |   |-- UsersSelect.sql
+|   |   |   |-- UserTestCreate.sql
+|   |   |   +-- UserTestDrop.sql
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   |-- lib
+|   |   |   |   |-- mysql-connector-java-5.1.23-bin.jar
+|   |   |   |   +-- tomcat-dbcp.jar
+|   |   |   +-- web.xml
+|   |   +-- index.jsp
+|   +-- build.xml
+|-- ch12_ex2_userAdmin
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           |-- admin
+|   |           |   +-- UsersServlet.java
+|   |           |-- business
+|   |           |   +-- User.java
+|   |           +-- data
+|   |               |-- ConnectionPool.java
+|   |               |-- DBUtil.java
+|   |               +-- UserDB.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   +-- web.xml
+|   |   |-- index.jsp
+|   |   +-- user.jsp
+|   +-- build.xml
+|-- ch12_ex2_userAdmin_sol
+|   |-- nbproject
+|   |   |-- private
+|   |   |   |-- private.properties
+|   |   |   +-- private.xml
+|   |   |-- ant-deploy.xml
+|   |   |-- build-impl.xml
+|   |   |-- genfiles.properties
+|   |   |-- project.properties
+|   |   +-- project.xml
+|   |-- src
+|   |   |-- conf
+|   |   |   +-- MANIFEST.MF
+|   |   +-- java
+|   |       +-- murach
+|   |           |-- admin
+|   |           |   +-- UsersServlet.java
+|   |           |-- business
+|   |           |   +-- User.java
+|   |           +-- data
+|   |               |-- ConnectionPool.java
+|   |               |-- DBUtil.java
+|   |               +-- UserDB.java
+|   |-- web
+|   |   |-- META-INF
+|   |   |   +-- context.xml
+|   |   |-- styles
+|   |   |   +-- main.css
+|   |   |-- WEB-INF
+|   |   |   +-- web.xml
+|   |   |-- index.jsp
+|   |   +-- user.jsp
+|   +-- build.xml
++-- libs
+    |-- javax.mail.jar
+    |-- jstl-1.2.jar
+    |-- mysql-connector-java-5.1.23-bin.jar
+    |-- poi-3.10-FINAL-20140208.jar
+    +-- tomcat-dbcp.jar
