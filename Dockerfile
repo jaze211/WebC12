@@ -3,7 +3,7 @@ FROM openjdk:8-jdk AS build
 
 WORKDIR /app
 
-# Install Ant and wget
+# Install Ant and wget (for downloading dependencies)
 RUN apt-get update && apt-get install -y ant wget && rm -rf /var/lib/apt/lists/*
 
 # Download javax.servlet-api for compilation
@@ -35,12 +35,10 @@ RUN ant clean dist \
 # ---- Stage 2: Run ----
 FROM tomcat:9-jdk11-openjdk
 
-# Configure Tomcat to use Render's $PORT
+# Configure Tomcat to use Render's $PORT (fallback to 8080)
 RUN sed -i 's/port="8080"/port="${connector.port}"/' /usr/local/tomcat/conf/server.xml
 RUN echo '#!/bin/sh' > /usr/local/tomcat/bin/setenv.sh && \
-    echo 'if [ -z "$PORT" ]; then' >> /usr/local/tomcat/bin/setenv.sh && \
-    echo '  PORT=8080' >> /usr/local/tomcat/bin/setenv.sh && \
-    echo 'fi' >> /usr/local/tomcat/bin/setenv.sh && \
+    echo 'if [ -z "$PORT" ]; then PORT=8080; fi' >> /usr/local/tomcat/bin/setenv.sh && \
     echo 'CATALINA_OPTS="$CATALINA_OPTS -Dconnector.port=$PORT"' >> /usr/local/tomcat/bin/setenv.sh && \
     chmod +x /usr/local/tomcat/bin/setenv.sh
 
