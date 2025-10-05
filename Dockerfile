@@ -24,9 +24,18 @@ RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/lib
 # Patch tomcat-dbcp.jar reference if it's added as a JAR file
 RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
 
+# Add servlet API to project.properties
+RUN echo "file.reference.javax-servlet-api-4.0.1.jar=/app/javax.servlet-api-4.0.1.jar" >> nbproject/project.properties
+
+# Append servlet API to javac.classpath (assuming multi-line format, insert new line)
+RUN sed -i '/^javac\.classpath=\\s*$/a \    \${file.reference.javax-servlet-api-4.0.1.jar}:' nbproject/project.properties
+
+# Update source and target to 1.8 to avoid bootstrap warning
+RUN sed -i 's/^javac.source=.*/javac.source=1.8/' nbproject/project.properties
+RUN sed -i 's/^javac.target=.*/javac.target=1.8/' nbproject/project.properties
+
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
-    -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
     -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
     -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
     -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
@@ -42,9 +51,18 @@ RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/lib
 # Patch tomcat-dbcp.jar reference if it's added as a JAR file
 RUN sed -i 's|^file.reference.tomcat-dbcp.jar=.*|file.reference.tomcat-dbcp.jar=/app/libs/tomcat-dbcp.jar|' nbproject/project.properties
 
+# Add servlet API to project.properties
+RUN echo "file.reference.javax-servlet-api-4.0.1.jar=/app/javax.servlet-api-4.0.1.jar" >> nbproject/project.properties
+
+# Append servlet API to javac.classpath (assuming multi-line format, insert new line)
+RUN sed -i '/^javac\.classpath=\\s*$/a \    \${file.reference.javax-servlet-api-4.0.1.jar}:' nbproject/project.properties
+
+# Update source and target to 1.8 to avoid bootstrap warning
+RUN sed -i 's/^javac.source=.*/javac.source=1.8/' nbproject/project.properties
+RUN sed -i 's/^javac.target=.*/javac.target=1.8/' nbproject/project.properties
+
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
-    -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
     -Dlibs.CopyLibs.classpath=/app/libs/org-netbeans-modules-java-j2seproject-copylibstask.jar \
     -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
     -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
