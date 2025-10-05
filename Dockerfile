@@ -14,8 +14,14 @@ COPY ch12_ex1_sqlGateway /app/ch12_ex1_sqlGateway
 COPY ch12_ex2_userAdmin /app/ch12_ex2_userAdmin
 COPY libs /app/libs
 
-# Build ch12_ex1_sqlGateway using Ant
+# ========================
+# Build ch12_ex1_sqlGateway
+# ========================
 WORKDIR /app/ch12_ex1_sqlGateway
+
+# Patch MySQLDriver path in project.properties
+RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
+
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
     -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
@@ -23,8 +29,14 @@ RUN ant clean dist \
     -Dlibs.jstl.classpath=/app/libs/jstl-1.2.jar \
     -Dlibs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar
 
-# Build ch12_ex2_userAdmin using Ant
+# ========================
+# Build ch12_ex2_userAdmin
+# ========================
 WORKDIR /app/ch12_ex2_userAdmin
+
+# Patch MySQLDriver path in project.properties
+RUN sed -i 's|^libs.MySQLDriver.classpath=.*|libs.MySQLDriver.classpath=/app/libs/mysql-connector-java-5.1.23-bin.jar|' nbproject/project.properties
+
 RUN ant clean dist \
     -Dlibs.dir=/app/libs \
     -Dservlet-api.jar=/app/javax.servlet-api-4.0.1.jar \
@@ -38,7 +50,9 @@ FROM tomcat:9-jdk11-openjdk
 # Configure Tomcat to use Render's $PORT (fallback to 8080)
 RUN sed -i 's/port="8080"/port="${connector.port}"/' /usr/local/tomcat/conf/server.xml
 RUN echo '#!/bin/sh' > /usr/local/tomcat/bin/setenv.sh && \
-    echo 'if [ -z "$PORT" ]; then PORT=8080; fi' >> /usr/local/tomcat/bin/setenv.sh && \
+    echo 'if [ -z "$PORT" ]; then' >> /usr/local/tomcat/bin/setenv.sh && \
+    echo '  PORT=8080' >> /usr/local/tomcat/bin/setenv.sh && \
+    echo 'fi' >> /usr/local/tomcat/bin/setenv.sh && \
     echo 'CATALINA_OPTS="$CATALINA_OPTS -Dconnector.port=$PORT"' >> /usr/local/tomcat/bin/setenv.sh && \
     chmod +x /usr/local/tomcat/bin/setenv.sh
 
